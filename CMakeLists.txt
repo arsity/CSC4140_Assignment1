@@ -3,6 +3,8 @@ project(CSC4140_Proj1)
 
 set(CMAKE_CXX_STANDARD 20)
 
+add_definitions(-DOPENCV_DISABLE_EIGEN_TENSOR_SUPPORT)
+
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
