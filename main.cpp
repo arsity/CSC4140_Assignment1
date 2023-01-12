@@ -9,10 +9,10 @@
 #include "opencv4/opencv2/imgcodecs.hpp"
 
 #define GRAYSCALE_MAX 255
-#define LENNA_PATH "/run/media/luke/Data/CSC4140/CSC4140_Proj1/lenna.png"
-#define IMG1 "/run/media/luke/Data/CSC4140/CSC4140_Proj1/120090645_HW_01.assets/res1.png"
-#define IMG2 "/run/media/luke/Data/CSC4140/CSC4140_Proj1/120090645_HW_01.assets/res2.png"
-#define IMG3 "/run/media/luke/Data/CSC4140/CSC4140_Proj1/120090645_HW_01.assets/res3.png"
+#define LENNA_PATH "../lenna.png"
+#define IMG1 "../res1.png"
+#define IMG2 "../res2.png"
+#define IMG3 "../res3.png"
 
 using namespace std;
 class Op {
@@ -40,19 +40,21 @@ class Op {
 
 using namespace cv;
 class opencv {
-  std::string image_path = samples::findFile(LENNA_PATH);
-  Mat img = imread(image_path, IMREAD_GRAYSCALE);
+  std::string image_path;
+  Mat img;
   Eigen::MatrixXd matrix;
 
  public:
-  opencv() {
+  explicit opencv(const std::string &path) {
+    image_path = samples::findFile(path + LENNA_PATH);
+    img = imread(image_path, IMREAD_GRAYSCALE);
     cv2eigen(img, matrix);
     matrix /= GRAYSCALE_MAX;
   }
 
-  void res() {
+  void res(const std::string &path) {
     Eigen::BDCSVD<Eigen::MatrixXd> bdcsvd(matrix, Eigen::ComputeFullU | Eigen::ComputeFullV);
-    auto U = bdcsvd.matrixU();
+    const auto &U = bdcsvd.matrixU();
     auto singularValues = bdcsvd.singularValues();
     auto V = bdcsvd.matrixV();
 
@@ -66,7 +68,7 @@ class opencv {
 
     Eigen::MatrixXd res1 = U * S1 * V.leftCols(1).transpose() * GRAYSCALE_MAX;
     eigen2cv(res1, resImg1);
-    imwrite(IMG1, resImg1);
+    imwrite(path + IMG1, resImg1);
 
     Eigen::MatrixXd S2(512, 10);
     for (auto i = 0; i < 512; ++i) {
@@ -80,7 +82,7 @@ class opencv {
     }
     Eigen::MatrixXd res2 = U * S2 * V.leftCols(10).transpose() * GRAYSCALE_MAX;
     eigen2cv(res2, resImg2);
-    imwrite(IMG2, resImg2);
+    imwrite(path + IMG2, resImg2);
 
     Eigen::MatrixXd S3(512, 50);
     for (auto i = 0; i < 512; ++i) {
@@ -94,7 +96,7 @@ class opencv {
     }
     Eigen::MatrixXd res3 = U * S3 * V.leftCols(50).transpose() * GRAYSCALE_MAX;
     eigen2cv(res3, resImg3);
-    imwrite(IMG3, resImg3);
+    imwrite(path + IMG3, resImg3);
   }
 };
 
@@ -115,13 +117,20 @@ class trans {
   }
 };
 
-int main() {
+int main([[maybe_unused]] int argc, char* argv[]) {
+
+  std::string str(argv[0]);
+  auto p = str.rbegin();
+  for (; *p != '/'; p++) {
+  }
+  std::string path(str.begin(), p.base());
+
   Op res{};
   res.res1();
   res.res2();
 
-  opencv oc{};
-  oc.res();
+  opencv oc(path);
+  oc.res(path);
 
   trans trans{};
   trans.res();
