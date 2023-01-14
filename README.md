@@ -1,4 +1,4 @@
-# CSC4140_Proj1
+# CSC4140_Assignment1
 Project 1 of CSC4140 Computer Graphics
 ## How to Start
 ```bash
