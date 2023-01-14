@@ -1,5 +1,5 @@
 # CSC4140_Assignment1
-Project 1 of CSC4140 Computer Graphics
+Assignment 1 of CSC4140 Computer Graphics
 ## How to Start
 ```bash
 git clone https://github.com/arsity/CSC4140_Assignment1.git
