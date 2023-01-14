@@ -1,12 +1,12 @@
 #include "iostream"
 
-#include "eigen3/Eigen/Core"
-#include "eigen3/Eigen/SVD"
-#include "eigen3/Eigen/Geometry"
+#include "Eigen/Core"
+#include "Eigen/SVD"
+#include "Eigen/Geometry"
 
-#include "opencv4/opencv2/core.hpp"
-#include "opencv4/opencv2/core/eigen.hpp"
-#include "opencv4/opencv2/imgcodecs.hpp"
+#include "opencv2/core.hpp"
+#include "opencv2/core/eigen.hpp"
+#include "opencv2/imgcodecs.hpp"
 
 #define GRAYSCALE_MAX 255
 #define LENNA_PATH "../lenna.png"
@@ -55,8 +55,8 @@ class opencv {
   void res(const std::string &path) {
     Eigen::BDCSVD<Eigen::MatrixXd> bdcsvd(matrix, Eigen::ComputeFullU | Eigen::ComputeFullV);
     const auto &U = bdcsvd.matrixU();
-    auto singularValues = bdcsvd.singularValues();
-    auto V = bdcsvd.matrixV();
+    const auto &singularValues = bdcsvd.singularValues();
+    const auto &V = bdcsvd.matrixV();
 
     Mat resImg1, resImg2, resImg3;
 
@@ -102,28 +102,27 @@ class opencv {
 
 using namespace Eigen;
 class trans {
-  Vector3f p1{1, 2, 3};
-  Vector3f p2{4, 5, 6};
+  Vector3d p1{1, 2, 3};
+  Vector3d p2{4, 5, 6};
  public:
   void res() {
-    p2.normalize();
-    auto t1 = AngleAxisf(0.25 * M_PI, p2);
-    auto t2 = AngleAxisf(float(1) / float(6) * M_PI, p2);
-    auto t3 = AngleAxisf(float(1) / float(3) * M_PI, p2);
-
-    std::cout << t1 * p1 << std::endl;
-    std::cout << t2 * p1 << std::endl;
-    std::cout << t3 * p1 << std::endl;
+    Vector3d src = p1 - p2;
+    Matrix3d t;
+    t = AngleAxisd(0.25 * M_PI, Vector3d::UnitX())
+        * AngleAxisd(double(1) / 6 * M_PI, Vector3d::UnitY())
+        * AngleAxisd(double(1) / 3 * M_PI, Vector3d::UnitZ());
+    Vector3d dst = t * src;
+    std::cout << dst + p2 << std::endl;
   }
 };
 
 int main([[maybe_unused]] int argc, char* argv[]) {
 
-  std::string str(argv[0]);
+  const std::string str(argv[0]);
   auto p = str.rbegin();
   for (; *p != '/'; p++) {
   }
-  std::string path(str.begin(), p.base());
+  const std::string path(str.begin(), p.base());
 
   Op res{};
   res.res1();
