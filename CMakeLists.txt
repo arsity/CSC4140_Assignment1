@@ -9,6 +9,7 @@ add_definitions(-DOPENCV_DISABLE_EIGEN_TENSOR_SUPPORT)
 # to avoid missing headers
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories("/usr/include/eigen3/")
 
 add_executable(CSC4140_Proj1 main.cpp)
 
